@@ -69,36 +69,21 @@ ENV GP_VSCODE_NODE=/home/gitpod/custom_node/bin/node
 
 USER gitpod
 
-ARG NODE_VERSION=22
-ENV NODE_VERSION=${NODE_VERSION}
 
-ENV PNPM_HOME=/home/gitpod/.pnpm
-ENV PATH=/home/gitpod/.nvm/versions/node/v${NODE_VERSION}/bin:/home/gitpod/.yarn/bin:${PNPM_HOME}:$PATH
+# # We use latest major version of Node.js distributed VS Code. (see about dialog in your local VS Code)
+# RUN bash -c ". .nvm/nvm.sh \
+#     && nvm install 20 \
+#     && nvm use 20 \
+#     && nvm alias default 20"
 
-RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | PROFILE=/dev/null bash \
-    && bash -c ". .nvm/nvm.sh \
-        && nvm install v${NODE_VERSION} \
-        && nvm alias default v${NODE_VERSION} \
-        && npm install -g typescript yarn pnpm node-gyp" \
-    && echo ". ~/.nvm/nvm-lazy.sh"  >> /home/gitpod/.bashrc.d/50-node
-# above, we are adding the lazy nvm init to .bashrc, because one is executed on interactive shells, the other for non-interactive shells (e.g. plugin-host)
-COPY --chown=gitpod:gitpod nvm-lazy.sh /home/gitpod/.nvm/nvm-lazy.sh
+# RUN echo "nvm use default &>/dev/null" >> ~/.bashrc.d/51-nvm-fix
 
-
-# We use latest major version of Node.js distributed VS Code. (see about dialog in your local VS Code)
-RUN bash -c ". .nvm/nvm.sh \
-    && nvm install 20 \
-    && nvm use 20 \
-    && nvm alias default 20"
-
-RUN echo "nvm use default &>/dev/null" >> ~/.bashrc.d/51-nvm-fix
-
-# Install dependencies
-RUN sudo apt-get update \
-    && sudo apt-get install -y --no-install-recommends \
-        xvfb x11vnc fluxbox dbus-x11 x11-utils x11-xserver-utils xdg-utils \
-        fbautostart xterm eterm gnome-terminal gnome-keyring seahorse nautilus \
-        libx11-dev libxkbfile-dev libsecret-1-dev libnotify4 libnss3 libxss1 \
-        libasound2 libgbm1 xfonts-base xfonts-terminus fonts-noto fonts-wqy-microhei \
-        fonts-droid-fallback vim-tiny nano libgconf2-dev libgtk-3-dev twm \
-    && sudo apt-get clean && sudo rm -rf /var/cache/apt/* && sudo rm -rf /var/lib/apt/lists/* && sudo rm -rf /tmp/*
+# # Install dependencies
+# RUN sudo apt-get update \
+#     && sudo apt-get install -y --no-install-recommends \
+#         xvfb x11vnc fluxbox dbus-x11 x11-utils x11-xserver-utils xdg-utils \
+#         fbautostart xterm eterm gnome-terminal gnome-keyring seahorse nautilus \
+#         libx11-dev libxkbfile-dev libsecret-1-dev libnotify4 libnss3 libxss1 \
+#         libasound2 libgbm1 xfonts-base xfonts-terminus fonts-noto fonts-wqy-microhei \
+#         fonts-droid-fallback vim-tiny nano libgconf2-dev libgtk-3-dev twm \
+#     && sudo apt-get clean && sudo rm -rf /var/cache/apt/* && sudo rm -rf /var/lib/apt/lists/* && sudo rm -rf /tmp/*
